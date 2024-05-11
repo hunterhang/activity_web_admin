@@ -1,5 +1,5 @@
 <template>
-  <el-tabs v-model="activeName" style="padding-left: 8px;" @tab-click="tabClick">
+  <el-tabs v-model="activeName" style="padding-left: 8px" @tab-click="tabClick">
     <el-tab-pane label="本地存储" name="first">
       <Local ref="local" />
     </el-tab-pane>
@@ -17,7 +17,7 @@ export default {
   components: { QiNiu, Local },
   data() {
     return {
-      activeName: 'first'
+      activeName: 'first',
     }
   },
   methods: {
@@ -27,10 +27,9 @@ export default {
       } else {
         this.$refs.qiNiu.crud.toQuery()
       }
-    }
-  }
+    },
+  },
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

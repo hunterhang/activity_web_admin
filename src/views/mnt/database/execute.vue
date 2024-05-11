@@ -1,5 +1,11 @@
 <template>
-  <el-dialog append-to-body :close-on-click-modal="false" :visible.sync="dialog" title="执行脚本" width="400px">
+  <el-dialog
+    append-to-body
+    :close-on-click-modal="false"
+    :visible.sync="dialog"
+    title="执行脚本"
+    width="400px"
+  >
     <el-form ref="form" :rules="rules" size="small">
       <el-upload
         :action="databaseUploadApi"
@@ -15,7 +21,9 @@
           将文件拖到此处，或
           <em>点击上传</em>
         </div>
-        <div slot="tip" class="el-upload__tip">上传后，系统会自动执行SQL脚本</div>
+        <div slot="tip" class="el-upload__tip">
+          上传后，系统会自动执行SQL脚本
+        </div>
       </el-upload>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -33,24 +41,23 @@ export default {
       type: Object,
       default() {
         return {}
-      }
-    }
+      },
+    },
   },
   data() {
     return {
       loading: false,
       dialog: false,
       headers: {
-        Authorization: getToken()
+        Authorization: getToken(),
       },
-      rules: {}
+      rules: {},
     }
   },
   computed: {
-    ...mapGetters(['databaseUploadApi'])
+    ...mapGetters(['databaseUploadApi']),
   },
-  mounted() {
-  },
+  mounted() {},
   methods: {
     cancel() {
       this.dialog = false
@@ -60,13 +67,13 @@ export default {
         this.$notify({
           title: '执行成功',
           type: 'success',
-          duration: 2500
+          duration: 2500,
         })
       } else {
         this.$notify({
           title: response,
           type: 'error',
-          duration: 0
+          duration: 0,
         })
       }
     },
@@ -75,12 +82,11 @@ export default {
       this.$notify({
         title: msg.message,
         type: 'error',
-        duration: 0
+        duration: 0,
       })
-    }
-  }
+    },
+  },
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

@@ -17,7 +17,13 @@
       </crudOperation>
     </div>
     <!--表格渲染-->
-    <el-table ref="table" v-loading="crud.loading" :data="crud.data" style="width: 100%;" @selection-change="crud.selectionChangeHandler">
+    <el-table
+      ref="table"
+      v-loading="crud.loading"
+      :data="crud.data"
+      style="width: 100%"
+      @selection-change="crud.selectionChangeHandler"
+    >
       <el-table-column type="expand">
         <template slot-scope="props">
           <el-form label-position="left" inline class="demo-table-expand">
@@ -32,17 +38,29 @@
       </el-table-column>
       <el-table-column prop="username" label="用户名" />
       <el-table-column prop="requestIp" label="IP" />
-      <el-table-column :show-overflow-tooltip="true" prop="address" label="IP来源" />
+      <el-table-column
+        :show-overflow-tooltip="true"
+        prop="address"
+        label="IP来源"
+      />
       <el-table-column prop="description" label="描述" />
       <el-table-column prop="browser" label="浏览器" />
       <el-table-column prop="createTime" label="创建日期" />
       <el-table-column label="异常详情" width="100px">
         <template slot-scope="scope">
-          <el-button size="mini" type="text" @click="info(scope.row.id)">查看详情</el-button>
+          <el-button size="mini" type="text" @click="info(scope.row.id)"
+            >查看详情</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
-    <el-dialog :visible.sync="dialog" title="异常详情" append-to-body top="30px" width="85%">
+    <el-dialog
+      :visible.sync="dialog"
+      title="异常详情"
+      append-to-body
+      top="30px"
+      width="85%"
+    >
       <pre>{{ errorInfo }}</pre>
     </el-dialog>
     <!--分页组件-->
@@ -66,7 +84,8 @@ export default {
   mixins: [presenter()],
   data() {
     return {
-      errorInfo: '', dialog: false
+      errorInfo: '',
+      dialog: false,
     }
   },
   created() {
@@ -74,14 +93,14 @@ export default {
       add: false,
       edit: false,
       del: false,
-      download: true
+      download: true,
     }
   },
   methods: {
     // 获取异常详情
     info(id) {
       this.dialog = true
-      getErrDetail(id).then(res => {
+      getErrDetail(id).then((res) => {
         this.errorInfo = res.exception
       })
     },
@@ -89,22 +108,25 @@ export default {
       this.$confirm(`确认清空所有异常日志吗?`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.crud.delAllLoading = true
-        delAllError().then(res => {
-          this.crud.delAllLoading = false
-          this.crud.dleChangePage(1)
-          this.crud.delSuccessNotify()
-          this.crud.toQuery()
-        }).catch(err => {
-          this.crud.delAllLoading = false
-          console.log(err.response.data.message)
-        })
-      }).catch(() => {
+        type: 'warning',
       })
-    }
-  }
+        .then(() => {
+          this.crud.delAllLoading = true
+          delAllError()
+            .then((res) => {
+              this.crud.delAllLoading = false
+              this.crud.dleChangePage(1)
+              this.crud.delSuccessNotify()
+              this.crud.toQuery()
+            })
+            .catch((err) => {
+              this.crud.delAllLoading = false
+              console.log(err.response.data.message)
+            })
+        })
+        .catch(() => {})
+    },
+  },
 }
 </script>
 

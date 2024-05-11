@@ -1,5 +1,5 @@
 <template>
-  <div :class="className" :style="{height:height,width:width}" />
+  <div :class="className" :style="{ height: height, width: width }" />
 </template>
 
 <script>
@@ -12,20 +12,20 @@ export default {
   props: {
     className: {
       type: String,
-      default: 'chart'
+      default: 'chart',
     },
     width: {
       type: String,
-      default: '100%'
+      default: '100%',
     },
     height: {
       type: String,
-      default: '300px'
-    }
+      default: '300px',
+    },
   },
   data() {
     return {
-      chart: null
+      chart: null,
     }
   },
   mounted() {
@@ -54,47 +54,61 @@ export default {
           type: 'sankey',
           layout: 'none',
           focusNodeAdjacency: 'allEdges',
-          data: [{
-            name: 'a'
-          }, {
-            name: 'b'
-          }, {
-            name: 'a1'
-          }, {
-            name: 'a2'
-          }, {
-            name: 'b1'
-          }, {
-            name: 'c'
-          }],
-          links: [{
-            source: 'a',
-            target: 'a1',
-            value: 5
-          }, {
-            source: 'a',
-            target: 'a2',
-            value: 3
-          }, {
-            source: 'b',
-            target: 'b1',
-            value: 8
-          }, {
-            source: 'a',
-            target: 'b1',
-            value: 3
-          }, {
-            source: 'b1',
-            target: 'a1',
-            value: 1
-          }, {
-            source: 'b1',
-            target: 'c',
-            value: 2
-          }]
-        }
+          data: [
+            {
+              name: 'a',
+            },
+            {
+              name: 'b',
+            },
+            {
+              name: 'a1',
+            },
+            {
+              name: 'a2',
+            },
+            {
+              name: 'b1',
+            },
+            {
+              name: 'c',
+            },
+          ],
+          links: [
+            {
+              source: 'a',
+              target: 'a1',
+              value: 5,
+            },
+            {
+              source: 'a',
+              target: 'a2',
+              value: 3,
+            },
+            {
+              source: 'b',
+              target: 'b1',
+              value: 8,
+            },
+            {
+              source: 'a',
+              target: 'b1',
+              value: 3,
+            },
+            {
+              source: 'b1',
+              target: 'a1',
+              value: 1,
+            },
+            {
+              source: 'b1',
+              target: 'c',
+              value: 2,
+            },
+          ],
+        },
       })
-    }
-  }
+    },
+  },
 }
 </script>

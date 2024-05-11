@@ -1,13 +1,42 @@
 <template>
   <div>
-    <el-button v-permission="permission.edit" :loading="crud.status.cu === 2" :disabled="disabledEdit" size="mini" type="primary" icon="el-icon-edit" @click.stop="toEdits" />
-    <el-popover v-model="pop" v-permission="permission.del" placement="top" width="180" trigger="manual" @show="onPopoverShow" @hide="onPopoverHide">
+    <el-button
+      v-permission="permission.edit"
+      :loading="crud.status.cu === 2"
+      :disabled="disabledEdit"
+      size="mini"
+      type="primary"
+      icon="el-icon-edit"
+      @click.stop="toEdits"
+    />
+    <el-popover
+      v-model="pop"
+      v-permission="permission.del"
+      placement="top"
+      width="180"
+      trigger="manual"
+      @show="onPopoverShow"
+      @hide="onPopoverHide"
+    >
       <p>{{ msg }}</p>
       <div style="text-align: right; margin: 0">
         <el-button size="mini" type="text" @click="doCancel">取消</el-button>
-        <el-button :loading="crud.dataStatus[crud.getDataId(data)].delete === 2" type="primary" size="mini" @click="crud.doDelete(data)">确定</el-button>
+        <el-button
+          :loading="crud.dataStatus[crud.getDataId(data)].delete === 2"
+          type="primary"
+          size="mini"
+          @click="crud.doDelete(data)"
+          >确定</el-button
+        >
       </div>
-      <el-button slot="reference" :disabled="disabledDle" type="danger" icon="el-icon-delete" size="mini" @click.stop="toDelete" />
+      <el-button
+        slot="reference"
+        :disabled="disabledDle"
+        type="danger"
+        icon="el-icon-delete"
+        size="mini"
+        @click.stop="toDelete"
+      />
     </el-popover>
   </div>
 </template>
@@ -18,28 +47,28 @@ export default {
   props: {
     data: {
       type: Object,
-      required: true
+      required: true,
     },
     permission: {
       type: Object,
-      required: true
+      required: true,
     },
     disabledEdit: {
       type: Boolean,
-      default: false
+      default: false,
     },
     disabledDle: {
       type: Boolean,
-      default: false
+      default: false,
     },
     msg: {
       type: String,
-      default: '确定删除本条数据吗？'
-    }
+      default: '确定删除本条数据吗？',
+    },
   },
   data() {
     return {
-      pop: false
+      pop: false,
     }
   },
   methods: {
@@ -69,7 +98,7 @@ export default {
     },
     handleDocumentClick(event) {
       this.pop = false
-    }
-  }
+    },
+  },
 }
 </script>

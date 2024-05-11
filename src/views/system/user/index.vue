@@ -34,7 +34,7 @@
               clearable
               size="small"
               placeholder="输入名称或者邮箱搜索"
-              style="width: 200px;"
+              style="width: 200px"
               class="filter-item"
               @keyup.enter.native="crud.toQuery"
             />
@@ -60,28 +60,48 @@
           <crudOperation show="" :permission="permission">
             <el-button
               slot="right"
-              v-permission="['admin','user:add']"
+              v-permission="['admin', 'user:add']"
               :disabled="crud.selections.length === 0"
               class="filter-item"
               size="mini"
               type="primary"
               icon="el-icon-refresh-left"
               @click="resetPwd(crud.selections)"
-            >重置密码
+              >重置密码
             </el-button>
           </crudOperation>
         </div>
         <!--表单渲染-->
-        <el-dialog append-to-body :close-on-click-modal="false" :before-close="crud.cancelCU" :visible.sync="crud.status.cu > 0" :title="crud.status.title" width="570px">
-          <el-form ref="form" :inline="true" :model="form" :rules="rules" size="small" label-width="66px">
+        <el-dialog
+          append-to-body
+          :close-on-click-modal="false"
+          :before-close="crud.cancelCU"
+          :visible.sync="crud.status.cu > 0"
+          :title="crud.status.title"
+          width="570px"
+        >
+          <el-form
+            ref="form"
+            :inline="true"
+            :model="form"
+            :rules="rules"
+            size="small"
+            label-width="66px"
+          >
             <el-form-item label="用户名" prop="username">
-              <el-input v-model="form.username" @keydown.native="keydown($event)" />
+              <el-input
+                v-model="form.username"
+                @keydown.native="keydown($event)"
+              />
             </el-form-item>
             <el-form-item label="电话" prop="phone">
               <el-input v-model.number="form.phone" />
             </el-form-item>
             <el-form-item label="昵称" prop="nickName">
-              <el-input v-model="form.nickName" @keydown.native="keydown($event)" />
+              <el-input
+                v-model="form.nickName"
+                @keydown.native="keydown($event)"
+              />
             </el-form-item>
             <el-form-item label="邮箱" prop="email">
               <el-input v-model="form.email" />
@@ -119,15 +139,19 @@
               </el-radio-group>
             </el-form-item>
             <el-form-item label="状态">
-              <el-radio-group v-model="form.enabled" :disabled="form.id === user.id">
+              <el-radio-group
+                v-model="form.enabled"
+                :disabled="form.id === user.id"
+              >
                 <el-radio
                   v-for="item in dict.user_status"
                   :key="item.id"
                   :label="item.value"
-                >{{ item.label }}</el-radio>
+                  >{{ item.label }}</el-radio
+                >
               </el-radio-group>
             </el-form-item>
-            <el-form-item style="margin-bottom: 0;" label="角色" prop="roles">
+            <el-form-item style="margin-bottom: 0" label="角色" prop="roles">
               <el-select
                 v-model="roleDatas"
                 style="width: 437px"
@@ -148,18 +172,55 @@
           </el-form>
           <div slot="footer" class="dialog-footer">
             <el-button type="text" @click="crud.cancelCU">取消</el-button>
-            <el-button :loading="crud.status.cu === 2" type="primary" @click="crud.submitCU">确认</el-button>
+            <el-button
+              :loading="crud.status.cu === 2"
+              type="primary"
+              @click="crud.submitCU"
+              >确认</el-button
+            >
           </div>
         </el-dialog>
         <!--表格渲染-->
-        <el-table ref="table" v-loading="crud.loading" :data="crud.data" style="width: 100%;" @selection-change="crud.selectionChangeHandler">
-          <el-table-column :selectable="checkboxT" type="selection" width="55" />
-          <el-table-column :show-overflow-tooltip="true" prop="username" label="用户名" />
-          <el-table-column :show-overflow-tooltip="true" prop="nickName" label="昵称" />
+        <el-table
+          ref="table"
+          v-loading="crud.loading"
+          :data="crud.data"
+          style="width: 100%"
+          @selection-change="crud.selectionChangeHandler"
+        >
+          <el-table-column
+            :selectable="checkboxT"
+            type="selection"
+            width="55"
+          />
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="username"
+            label="用户名"
+          />
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="nickName"
+            label="昵称"
+          />
           <el-table-column prop="gender" label="性别" />
-          <el-table-column :show-overflow-tooltip="true" prop="phone" width="100" label="电话" />
-          <el-table-column :show-overflow-tooltip="true" width="135" prop="email" label="邮箱" />
-          <el-table-column :show-overflow-tooltip="true" prop="dept" label="部门">
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="phone"
+            width="100"
+            label="电话"
+          />
+          <el-table-column
+            :show-overflow-tooltip="true"
+            width="135"
+            prop="email"
+            label="邮箱"
+          />
+          <el-table-column
+            :show-overflow-tooltip="true"
+            prop="dept"
+            label="部门"
+          >
             <template slot-scope="scope">
               <div>{{ scope.row.dept.name }}</div>
             </template>
@@ -175,9 +236,14 @@
               />
             </template>
           </el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="createTime" width="135" label="创建日期" />
           <el-table-column
-            v-if="checkPer(['admin','user:edit','user:del'])"
+            :show-overflow-tooltip="true"
+            prop="createTime"
+            width="135"
+            label="创建日期"
+          />
+          <el-table-column
+            v-if="checkPer(['admin', 'user:edit', 'user:del'])"
             label="操作"
             width="115"
             align="center"
@@ -217,12 +283,34 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import { LOAD_CHILDREN_OPTIONS } from '@riophae/vue-treeselect'
 let userRoles = []
 let userJobs = []
-const defaultForm = { id: null, username: null, nickName: null, gender: '男', email: null, enabled: 'false', roles: [], jobs: [], dept: { id: null }, phone: null }
+const defaultForm = {
+  id: null,
+  username: null,
+  nickName: null,
+  gender: '男',
+  email: null,
+  enabled: 'false',
+  roles: [],
+  jobs: [],
+  dept: { id: null },
+  phone: null,
+}
 export default {
   name: 'User',
-  components: { Treeselect, crudOperation, rrOperation, udOperation, pagination, DateRangePicker },
+  components: {
+    Treeselect,
+    crudOperation,
+    rrOperation,
+    udOperation,
+    pagination,
+    DateRangePicker,
+  },
   cruds() {
-    return CRUD({ title: '用户', url: 'api/users', crudMethod: { ...crudUser }})
+    return CRUD({
+      title: '用户',
+      url: 'api/users',
+      crudMethod: { ...crudUser },
+    })
   },
   mixins: [presenter(), header(), form(defaultForm), crud()],
   // 数据字典
@@ -240,46 +328,58 @@ export default {
     }
     return {
       height: document.documentElement.clientHeight - 180 + 'px;',
-      deptName: '', depts: [], deptDatas: [], jobs: [], level: 3, roles: [],
-      jobDatas: [], roleDatas: [], // 多选时使用
+      deptName: '',
+      depts: [],
+      deptDatas: [],
+      jobs: [],
+      level: 3,
+      roles: [],
+      jobDatas: [],
+      roleDatas: [], // 多选时使用
       defaultProps: { children: 'children', label: 'name', isLeaf: 'leaf' },
       permission: {
         add: ['admin', 'user:add'],
         edit: ['admin', 'user:edit'],
-        del: ['admin', 'user:del']
+        del: ['admin', 'user:del'],
       },
       enabledTypeOptions: [
         { key: 'true', display_name: '激活' },
-        { key: 'false', display_name: '锁定' }
+        { key: 'false', display_name: '锁定' },
       ],
       rules: {
         username: [
           { required: true, message: '请输入用户名', trigger: 'blur' },
-          { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
+          {
+            min: 2,
+            max: 20,
+            message: '长度在 2 到 20 个字符',
+            trigger: 'blur',
+          },
         ],
         nickName: [
           { required: true, message: '请输入用户昵称', trigger: 'blur' },
-          { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
+          {
+            min: 2,
+            max: 20,
+            message: '长度在 2 到 20 个字符',
+            trigger: 'blur',
+          },
         ],
         email: [
           { required: true, message: '请输入邮箱地址', trigger: 'blur' },
-          { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }
+          { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' },
         ],
-        phone: [
-          { required: true, trigger: 'blur', validator: validPhone }
-        ]
-      }
+        phone: [{ required: true, trigger: 'blur', validator: validPhone }],
+      },
     }
   },
   computed: {
-    ...mapGetters([
-      'user'
-    ])
+    ...mapGetters(['user']),
   },
   created() {
     this.crud.msg.add = '新增成功，默认密码：123456'
   },
-  mounted: function() {
+  mounted: function () {
     const that = this
     window.onresize = function temp() {
       that.height = document.documentElement.clientHeight - 180 + 'px;'
@@ -294,20 +394,20 @@ export default {
     },
     changeRole(value) {
       userRoles = []
-      value.forEach(function(data, index) {
+      value.forEach(function (data, index) {
         const role = { id: data }
         userRoles.push(role)
       })
     },
     changeJob(value) {
       userJobs = []
-      value.forEach(function(data, index) {
+      value.forEach(function (data, index) {
         const job = { id: data }
         userJobs.push(job)
       })
     },
     deleteTag(value) {
-      userRoles.forEach(function(data, index) {
+      userRoles.forEach(function (data, index) {
         if (data.id === value) {
           userRoles.splice(index, value)
         }
@@ -338,12 +438,12 @@ export default {
       userRoles = []
       userJobs = []
       const _this = this
-      form.roles.forEach(function(role, index) {
+      form.roles.forEach(function (role, index) {
         _this.roleDatas.push(role.id)
         const rol = { id: role.id }
         userRoles.push(rol)
       })
-      form.jobs.forEach(function(job, index) {
+      form.jobs.forEach(function (job, index) {
         _this.jobDatas.push(job.id)
         const data = { id: job.id }
         userJobs.push(data)
@@ -354,19 +454,19 @@ export default {
       if (!crud.form.dept.id) {
         this.$message({
           message: '部门不能为空',
-          type: 'warning'
+          type: 'warning',
         })
         return false
       } else if (this.jobDatas.length === 0) {
         this.$message({
           message: '岗位不能为空',
-          type: 'warning'
+          type: 'warning',
         })
         return false
       } else if (this.roleDatas.length === 0) {
         this.$message({
           message: '角色不能为空',
-          type: 'warning'
+          type: 'warning',
         })
         return false
       }
@@ -385,7 +485,7 @@ export default {
         params['pid'] = node.data.id
       }
       setTimeout(() => {
-        getDepts(params).then(res => {
+        getDepts(params).then((res) => {
           if (resolve) {
             resolve(res.content)
           } else {
@@ -395,8 +495,8 @@ export default {
       }, 100)
     },
     getDepts() {
-      getDepts({ enabled: true }).then(res => {
-        this.depts = res.content.map(function(obj) {
+      getDepts({ enabled: true }).then((res) => {
+        this.depts = res.content.map(function (obj) {
           if (obj.hasChildren) {
             obj.children = null
           }
@@ -405,14 +505,14 @@ export default {
       })
     },
     getSupDepts(deptId) {
-      getDeptSuperior(deptId).then(res => {
+      getDeptSuperior(deptId).then((res) => {
         const date = res.content
         this.buildDepts(date)
         this.depts = date
       })
     },
     buildDepts(depts) {
-      depts.forEach(data => {
+      depts.forEach((data) => {
         if (data.children) {
           this.buildDepts(data.children)
         }
@@ -424,8 +524,8 @@ export default {
     // 获取弹窗内部门数据
     loadDepts({ action, parentNode, callback }) {
       if (action === LOAD_CHILDREN_OPTIONS) {
-        getDepts({ enabled: true, pid: parentNode.id }).then(res => {
-          parentNode.children = res.content.map(function(obj) {
+        getDepts({ enabled: true, pid: parentNode.id }).then((res) => {
+          parentNode.children = res.content.map(function (obj) {
             if (obj.hasChildren) {
               obj.children = null
             }
@@ -448,65 +548,100 @@ export default {
     },
     // 改变状态
     changeEnabled(data, val) {
-      this.$confirm('此操作将 "' + this.dict.label.user_status[val] + '" ' + data.username + ', 是否继续？', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        crudUser.edit(data).then(res => {
-          this.crud.notify(this.dict.label.user_status[val] + '成功', CRUD.NOTIFICATION_TYPE.SUCCESS)
-        }).catch(() => {
+      this.$confirm(
+        '此操作将 "' +
+          this.dict.label.user_status[val] +
+          '" ' +
+          data.username +
+          ', 是否继续？',
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }
+      )
+        .then(() => {
+          crudUser
+            .edit(data)
+            .then((res) => {
+              this.crud.notify(
+                this.dict.label.user_status[val] + '成功',
+                CRUD.NOTIFICATION_TYPE.SUCCESS
+              )
+            })
+            .catch(() => {
+              data.enabled = !data.enabled
+            })
+        })
+        .catch(() => {
           data.enabled = !data.enabled
         })
-      }).catch(() => {
-        data.enabled = !data.enabled
-      })
     },
     // 获取弹窗内角色数据
     getRoles() {
-      getAll().then(res => {
-        this.roles = res
-      }).catch(() => { })
+      getAll()
+        .then((res) => {
+          this.roles = res
+        })
+        .catch(() => {})
     },
     // 获取弹窗内岗位数据
     getJobs() {
-      getAllJob().then(res => {
-        this.jobs = res.content
-      }).catch(() => { })
+      getAllJob()
+        .then((res) => {
+          this.jobs = res.content
+        })
+        .catch(() => {})
     },
     // 获取权限级别
     getRoleLevel() {
-      getLevel().then(res => {
-        this.level = res.level
-      }).catch(() => { })
+      getLevel()
+        .then((res) => {
+          this.level = res.level
+        })
+        .catch(() => {})
     },
     checkboxT(row, rowIndex) {
       return row.id !== this.user.id
     },
     resetPwd(datas) {
-      this.$confirm(`你选中了 ${datas.length} 位用户，确认重置用户的密码吗?`, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        const ids = []
-        datas.forEach(val => {
-          ids.push(val.id)
+      this.$confirm(
+        `你选中了 ${datas.length} 位用户，确认重置用户的密码吗?`,
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }
+      )
+        .then(() => {
+          const ids = []
+          datas.forEach((val) => {
+            ids.push(val.id)
+          })
+          console.log(ids)
+          crudUser
+            .resetPwd(ids)
+            .then(() => {
+              this.crud.notify(
+                '重置成功, 用户新密码:123456',
+                CRUD.NOTIFICATION_TYPE.SUCCESS
+              )
+            })
+            .catch(() => {})
         })
-        console.log(ids)
-        crudUser.resetPwd(ids).then(() => {
-          this.crud.notify('重置成功, 用户新密码:123456', CRUD.NOTIFICATION_TYPE.SUCCESS)
-        }).catch(() => {})
-      }).catch(() => {
-      })
-    }
-  }
+        .catch(() => {})
+    },
+  },
 }
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
-  ::v-deep .vue-treeselect__control,::v-deep .vue-treeselect__placeholder,::v-deep .vue-treeselect__single-value {
-    height: 30px;
-    line-height: 30px;
-  }
+::v-deep .vue-treeselect__control,
+::v-deep .vue-treeselect__placeholder,
+::v-deep .vue-treeselect__single-value {
+  height: 30px;
+  line-height: 30px;
+}
 </style>

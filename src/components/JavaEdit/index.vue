@@ -14,16 +14,16 @@ export default {
   props: {
     value: {
       type: String,
-      required: true
+      required: true,
     },
     height: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
-      editor: false
+      editor: false,
     }
   },
   watch: {
@@ -35,7 +35,7 @@ export default {
     },
     height(value) {
       this.editor.setSize('auto', this.height)
-    }
+    },
   },
   mounted() {
     this.editor = CodeMirror.fromTextArea(this.$refs.textarea, {
@@ -47,7 +47,7 @@ export default {
       cursorHeight: 0.9,
       // 替换主题这里需修改名称
       theme: 'idea',
-      readOnly: true
+      readOnly: true,
     })
     this.editor.setSize('auto', this.height)
     this.editor.setValue(this.value)
@@ -55,23 +55,23 @@ export default {
   methods: {
     getValue() {
       return this.editor.getValue()
-    }
-  }
+    },
+  },
 }
 </script>
 
 <style scoped>
-  .json-editor{
-    height: 100%;
-    margin-bottom: 10px;
-  }
-  .json-editor >>> .CodeMirror {
-    font-size: 14px;
-    font-weight:normal
-  }
-  .json-editor >>> .CodeMirror-scroll{
-  }
-  .json-editor >>> .cm-s-rubyblue span.cm-string {
-    color: #F08047;
-  }
+.json-editor {
+  height: 100%;
+  margin-bottom: 10px;
+}
+.json-editor >>> .CodeMirror {
+  font-size: 14px;
+  font-weight: normal;
+}
+.json-editor >>> .CodeMirror-scroll {
+}
+.json-editor >>> .cm-s-rubyblue span.cm-string {
+  color: #f08047;
+}
 </style>

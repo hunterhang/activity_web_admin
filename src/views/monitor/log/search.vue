@@ -5,7 +5,7 @@
       clearable
       size="small"
       placeholder="请输入你要搜索的内容"
-      style="width: 200px;"
+      style="width: 200px"
       class="filter-item"
     />
     <date-range-picker v-model="query.createTime" class="date-item" />
@@ -19,6 +19,6 @@ import rrOperation from '@crud/RR.operation'
 import DateRangePicker from '@/components/DateRangePicker'
 export default {
   components: { rrOperation, DateRangePicker },
-  mixins: [header()]
+  mixins: [header()],
 }
 </script>

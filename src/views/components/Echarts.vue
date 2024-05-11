@@ -1,7 +1,9 @@
 <template>
   <div class="dashboard-container">
     <div class="dashboard-editor-container">
-      <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
+      <el-row
+        style="background: #fff; padding: 16px 16px 0; margin-bottom: 32px"
+      >
         <heat-map />
       </el-row>
       <el-row :gutter="32">
@@ -57,7 +59,9 @@
           </div>
         </el-col>
       </el-row>
-      <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
+      <el-row
+        style="background: #fff; padding: 16px 16px 0; margin-bottom: 32px"
+      >
         <div class="chart-wrapper">
           <category />
         </div>
@@ -92,19 +96,19 @@ export default {
     Rich,
     ThemeRiver,
     Sankey,
-    Scatter
-  }
+    Scatter,
+  },
 }
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
-  .dashboard-editor-container {
-    padding: 18px 22px 22px 22px;
-    background-color: rgb(240, 242, 245);
-    .chart-wrapper {
-      background: #fff;
-      padding: 16px 16px 0;
-      margin-bottom: 32px;
-    }
+.dashboard-editor-container {
+  padding: 18px 22px 22px 22px;
+  background-color: rgb(240, 242, 245);
+  .chart-wrapper {
+    background: #fff;
+    padding: 16px 16px 0;
+    margin-bottom: 32px;
   }
+}
 </style>

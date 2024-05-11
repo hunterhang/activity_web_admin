@@ -1,5 +1,5 @@
 <template>
-  <div :class="className" :style="{height:height,width:width}" />
+  <div :class="className" :style="{ height: height, width: width }" />
 </template>
 
 <script>
@@ -12,20 +12,20 @@ export default {
   props: {
     className: {
       type: String,
-      default: 'chart'
+      default: 'chart',
     },
     width: {
       type: String,
-      default: '100%'
+      default: '100%',
     },
     height: {
       type: String,
-      default: '300px'
-    }
+      default: '300px',
+    },
   },
   data() {
     return {
-      chart: null
+      chart: null,
     }
   },
   mounted() {
@@ -51,7 +51,7 @@ export default {
 
       this.chart.setOption({
         title: {
-          text: 'Graph 简单示例'
+          text: 'Graph 简单示例',
         },
         tooltip: {},
         animationDurationUpdate: 1500,
@@ -64,86 +64,98 @@ export default {
             roam: true,
             label: {
               normal: {
-                show: true
-              }
+                show: true,
+              },
             },
             edgeSymbol: ['circle', 'arrow'],
             edgeSymbolSize: [4, 10],
             edgeLabel: {
               normal: {
                 textStyle: {
-                  fontSize: 20
-                }
-              }
+                  fontSize: 20,
+                },
+              },
             },
-            data: [{
-              name: '节点1',
-              x: 100,
-              y: 300
-            }, {
-              name: '节点2',
-              x: 1000,
-              y: 300
-            }, {
-              name: '节点3',
-              x: 550,
-              y: 100
-            }, {
-              name: '节点4',
-              x: 550,
-              y: 500
-            }],
+            data: [
+              {
+                name: '节点1',
+                x: 100,
+                y: 300,
+              },
+              {
+                name: '节点2',
+                x: 1000,
+                y: 300,
+              },
+              {
+                name: '节点3',
+                x: 550,
+                y: 100,
+              },
+              {
+                name: '节点4',
+                x: 550,
+                y: 500,
+              },
+            ],
             // links: [],
-            links: [{
-              source: 0,
-              target: 1,
-              symbolSize: [5, 20],
-              label: {
-                normal: {
-                  show: true
-                }
+            links: [
+              {
+                source: 0,
+                target: 1,
+                symbolSize: [5, 20],
+                label: {
+                  normal: {
+                    show: true,
+                  },
+                },
+                lineStyle: {
+                  normal: {
+                    width: 5,
+                    curveness: 0.2,
+                  },
+                },
               },
-              lineStyle: {
-                normal: {
-                  width: 5,
-                  curveness: 0.2
-                }
-              }
-            }, {
-              source: '节点2',
-              target: '节点1',
-              label: {
-                normal: {
-                  show: true
-                }
+              {
+                source: '节点2',
+                target: '节点1',
+                label: {
+                  normal: {
+                    show: true,
+                  },
+                },
+                lineStyle: {
+                  normal: { curveness: 0.2 },
+                },
               },
-              lineStyle: {
-                normal: { curveness: 0.2 }
-              }
-            }, {
-              source: '节点1',
-              target: '节点3'
-            }, {
-              source: '节点2',
-              target: '节点3'
-            }, {
-              source: '节点2',
-              target: '节点4'
-            }, {
-              source: '节点1',
-              target: '节点4'
-            }],
+              {
+                source: '节点1',
+                target: '节点3',
+              },
+              {
+                source: '节点2',
+                target: '节点3',
+              },
+              {
+                source: '节点2',
+                target: '节点4',
+              },
+              {
+                source: '节点1',
+                target: '节点4',
+              },
+            ],
             lineStyle: {
               normal: {
                 opacity: 0.9,
                 width: 2,
-                curveness: 0
-              }
-            }
-          }
-        ]
+                curveness: 0,
+              },
+            },
+          },
+        ],
       })
-    }
-  }
+    },
+  },
 }
 </script>
