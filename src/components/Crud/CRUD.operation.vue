@@ -51,6 +51,18 @@
         @click="crud.doExport"
         >导出</el-button
       >
+      <el-button
+        v-if="crud.optShow.show"
+        v-permission="permission.edit"
+        class="filter-item"
+        size="mini"
+        type="success"
+        icon="el-icon-edit"
+        :disabled="crud.selections.length !== 1"
+        @click="crud.toShow(crud.selections[0])"
+      >
+        查看
+      </el-button>
       <!--右侧-->
       <slot name="right" />
     </span>

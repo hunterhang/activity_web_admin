@@ -38,7 +38,8 @@ function CRUD(options) {
       add: (form) => {},
       del: (id) => {},
       edit: (form) => {},
-      get: (id) => {}
+      get: (id) => {},
+      show: (form) => {}
     },
     // 主页操作栏显示哪些按钮
     optShow: {
@@ -46,7 +47,8 @@ function CRUD(options) {
       edit: true,
       del: true,
       download: true,
-      reset: true
+      reset: true,
+      show: true
     },
     // 自定义一些扩展属性
     props: {},
@@ -176,6 +178,16 @@ function CRUD(options) {
       callVmHook(crud, CRUD.HOOK.afterToEdit, crud.form)
       callVmHook(crud, CRUD.HOOK.afterToCU, crud.form)
     },
+    toShow(data) {
+      crud.resetForm(JSON.parse(JSON.stringify(data)))
+      if (!(callVmHook(crud, CRUD.HOOK.beforeToShow, crud.form) && callVmHook(crud, CRUD.HOOK.beforeToCU, crud.form))) {
+        return
+      }
+      crud.status.edit = CRUD.STATUS.PREPARED
+      crud.getDataStatus(crud.getDataId(data)).edit = CRUD.STATUS.PREPARED
+      callVmHook(crud, CRUD.HOOK.afterToEdit, crud.form)
+      callVmHook(crud, CRUD.HOOK.afterToCU, crud.form)
+    },
     /**
      * 启动删除
      * @param {*} data 数据项
@@ -256,7 +268,6 @@ function CRUD(options) {
       }
       crud.status.add = CRUD.STATUS.PROCESSING
       crud.crudMethod.add(crud.form).then(() => {
-        console.log("dddddddddddddddddddddddddddddddddddddddddddddddddddddd", crud.form)
         crud.status.add = CRUD.STATUS.NORMAL
         crud.resetForm()
         crud.addSuccessNotify()
@@ -813,6 +824,7 @@ CRUD.HOOK = {
   beforeToEdit: 'beforeCrudToEdit',
   /** 编辑 - 之后 */
   afterToEdit: 'afterCrudToEdit',
+  beforeToShow: 'beforeCrudToShow',
   /** 开始 "新建/编辑" - 之前 */
   beforeToCU: 'beforeCrudToCU',
   /** 开始 "新建/编辑" - 之后 */

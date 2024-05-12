@@ -124,7 +124,7 @@ const defaultForm = {
   shareParticipateNum: null,
   shareUrl: null,
   randomCode: null,
-  drawTime: null
+  drawTime: null,
 }
 export default {
   name: 'UserActivityShareRecord',
@@ -136,7 +136,7 @@ export default {
       url: 'api/userActivityShareRecord',
       idField: 'columnId',
       sort: 'columnId,desc',
-      crudMethod: { ...crudUserActivityShareRecord }
+      crudMethod: { ...crudUserActivityShareRecord },
     })
   },
   data() {
@@ -145,18 +145,18 @@ export default {
       permission: {
         add: ['admin', 'userActivityShareRecord:add'],
         edit: ['admin', 'userActivityShareRecord:edit'],
-        del: ['admin', 'userActivityShareRecord:del']
+        del: ['admin', 'userActivityShareRecord:del'],
       },
       rules: {
         activityId: [{ required: true, message: '不能为空', trigger: 'blur' }],
         userId: [{ required: true, message: '不能为空', trigger: 'blur' }],
         shareUrl: [
-          { required: true, message: '分享链接不能为空', trigger: 'blur' }
+          { required: true, message: '分享链接不能为空', trigger: 'blur' },
         ],
         randomCode: [
-          { required: true, message: '随机码不能为空', trigger: 'blur' }
-        ]
-      }
+          { required: true, message: '随机码不能为空', trigger: 'blur' },
+        ],
+      },
     }
   },
   mounted() {
@@ -164,7 +164,7 @@ export default {
       rows.content.forEach((element) => {
         this.activityList.push({
           label: element.activityTitle,
-          value: element.activityId
+          value: element.activityId,
         })
       })
       console.log(this.activityList)
@@ -174,8 +174,8 @@ export default {
     // 钩子：在获取表格数据之前执行，false 则代表不获取数据
     [CRUD.HOOK.beforeRefresh]() {
       return true
-    }
-  }
+    },
+  },
 }
 </script>
 

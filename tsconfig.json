@@ -1,0 +1,33 @@
+{
+    "compilerOptions": {
+      "target": "esnext",
+      "module": "esnext",
+      "moduleResolution": "node",
+      "strict": true,
+      "jsx": "preserve",                     // Vue 3 使用 JSX 需要此选项
+      "importHelpers": true,
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "sourceMap": true,
+      "baseUrl": ".",                        // 使路径解析更方便
+      "paths": {
+        "@/*": ["src/*"]                 //  设置路径别名，方便导入src目录下的文件
+      },
+      "lib": [
+        "esnext",
+        "dom",
+        "dom.iterable",
+        "scripthost"
+      ]
+    },
+    "include": [
+      "src/**/*.ts",
+      "src/**/*.tsx",
+      "src/**/*.vue",
+      "tests/**/*.ts",
+      "tests/**/*.tsx"
+    ],
+    "exclude": [
+      "node_modules"
+    ]
+  }

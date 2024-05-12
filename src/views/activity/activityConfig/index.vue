@@ -7,6 +7,7 @@
         <label class="el-form-item-label">活动标题</label>
         <el-select
           v-model="query.activityId"
+          :disabled="this.isFormShow == true"
           filterable
           allow-create
           default-first-option
@@ -19,14 +20,13 @@
             :key="item.value"
             :label="item.label"
             :value="item.value"
-            >{{ item.label }}</el-option
-          >
+          >{{ item.label }}</el-option>
         </el-select>
         <label class="el-form-item-label">活动状态</label>
         <el-select
           v-model="query.activityStatus"
           placeholder="请选择"
-          style="width: 160px"
+          style="width: 200px"
         >
           <el-option
             v-for="item in dict.activity_status"
@@ -39,24 +39,6 @@
         <!--        <label class="el-form-item-label">活动类型</label>-->
         <!--        <el-input v-model="query.activityType" clearable placeholder="活动类型" style="width: 185px;" class="filter-item" @keyup.enter.native="crud.toQuery" />-->
         <rrOperation :crud="crud" />
-        <date-range-picker
-          v-model="query.startTime"
-          start-placeholder="startTimeStart"
-          end-placeholder="startTimeStart"
-          class="date-item"
-        />
-        <date-range-picker
-          v-model="query.endTime"
-          start-placeholder="endTimeStart"
-          end-placeholder="endTimeStart"
-          class="date-item"
-        />
-        <date-range-picker
-          v-model="query.createTime"
-          start-placeholder="createTimeStart"
-          end-placeholder="createTimeStart"
-          class="date-item"
-        />
       </div>
       <!--如果想在工具栏加入更多按钮，可以使用插槽方式， slot = 'left' or 'right'-->
       <crudOperation :permission="permission" />
@@ -75,23 +57,9 @@
           size="small"
           label-width="180px"
         >
-          <!--          <el-form-item label="ID">-->
-          <!--            <el-input v-model="form.columnId" style="width: 370px;" />-->
-          <!--          </el-form-item>-->
-          <!--          <el-form-item label="活动ID" prop="activityId">-->
-          <!--            <el-input v-model="form.activityId" style="width: 370px;" />-->
-          <!--          </el-form-item>-->
-
           <el-form-item label="活动标题" prop="activityTitle">
-            <el-input v-model="form.activityTitle" style="width: 370px" />
+            <el-input v-model="form.activityTitle" style="width: 370px" :disabled="this.isFormShow == true" />
           </el-form-item>
-          <!-- <el-form-item label="开始时间" prop="startTime">
-            <el-date-picker v-model="form.startTime" type="datetime" style="width: 370px;" />
-          </el-form-item>
-
-          <el-form-item label="结束时间" prop="endTime">
-            <el-date-picker v-model="form.endTime" type="datetime" style="width: 370px;" />
-          </el-form-item> -->
           <el-form-item label="活动时间" prop="startTime">
             <el-date-picker
               v-model="activityTimePicker"
@@ -99,38 +67,23 @@
               range-separator="至"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
-              @change="timeChange"
               value-format="yyyy-MM-dd HH:mm:ss"
-            >
-            </el-date-picker>
+              :picker-options="datePickerOptions"
+              :disabled="this.isFormShow == true"
+              @change="timeChange"
+            />
           </el-form-item>
-
-          <el-form-item label="活动状态">
-            <el-select v-model="form.activityStatus" placeholder="请选择">
-              <el-option
-                v-for="item in dict.activity_status"
-                :key="item.id"
-                :label="item.label"
-                :value="item.value"
-                >{{ item.label }}</el-option
-              >
-            </el-select>
-          </el-form-item>
-          <!--          <el-form-item label="活动类型">-->
-          <!--            未设置字典，请手动设置 Select-->
-          <!--          </el-form-item>-->
           <el-form-item label="用户范围">
-            <el-select v-model="form.userRange" placeholder="请选择">
+            <el-select v-model="form.userRange" disabled placeholder="请选择">
               <el-option
                 v-for="item in dict.user_range"
                 :key="item.id"
                 :label="item.label"
                 :value="item.value"
-                >{{ item.label }}</el-option
-              >
+              >{{ item.label }}</el-option>
             </el-select>
           </el-form-item>
-          <el-row>
+          <!-- <el-row>
             <el-col :span="12">
               <el-form-item label="活动说明" :label-width="formLabelWidth">
                 <el-upload
@@ -157,27 +110,46 @@
                 :fit="fit"
               ></el-image>
             </el-col>
-          </el-row>
+          </el-row> -->
+          <el-form-item label="活动图片" prop="activityImgUrl">
+            <el-upload
+              action="/api/image/upload"
+              list-type="picture-card"
+              :on-preview="handlePictureCardPreview"
+              :on-remove="handleRemove"
+              :limit="1"
+              :disabled="this.isFormShow == true"
+            >
+              <i class="el-icon-plus" />
+            </el-upload>
+            <el-dialog :visible.sync="dialogImgVisible" size="tiny">
+              <img width="100%" :src="form.activityImgUrl" alt="">
+            </el-dialog>
+          </el-form-item>
+
           <el-form-item label="活动说明" prop="activityDesc">
             <el-input
               v-model="form.activityDesc"
               :rows="3"
               type="textarea"
               style="width: 500px"
+              :disabled="this.isFormShow == true"
             />
           </el-form-item>
           <el-row>
             <el-col :span="10">
               <el-form-item label="限制参与人数">
-                <el-radio v-model="is_limit_user_num" label="0">否</el-radio>
-                <el-radio v-model="is_limit_user_num" label="1">是</el-radio>
+                <el-radio v-model="form.isLimitPersonNum" :disabled="this.isFormShow == true" :label="0">不限制</el-radio>
+                <el-radio v-model="form.isLimitPersonNum" :disabled="this.isFormShow == true" :label="1">限制</el-radio>
               </el-form-item>
             </el-col>
             <el-col :span="3">
-              <el-form-item v-if="is_limit_user_num == '1'">
+              <el-form-item v-if="form.isLimitPersonNum === 1">
                 <el-input-number
                   v-model="form.userRangeNum"
                   style="width: 160px"
+                  :min="1"
+                  :disabled="this.isFormShow == true"
                 />
               </el-form-item>
             </el-col>
@@ -186,16 +158,17 @@
           <el-row>
             <el-col :span="10">
               <el-form-item label="用户活动期间参与总次数">
-                <el-radio v-model="is_limit_total_times" label="0">否</el-radio>
-                <el-radio v-model="is_limit_total_times" label="1">是</el-radio>
+                <el-radio v-model="form.isLimitTotalTimeNum" :disabled="this.isFormShow == true" :label="0">不限制</el-radio>
+                <el-radio v-model="form.isLimitTotalTimeNum" :disabled="this.isFormShow == true" :label="1">限制</el-radio>
               </el-form-item>
             </el-col>
             <el-col :span="3">
-              <el-form-item v-if="is_limit_total_times == '1'">
+              <el-form-item v-if="form.isLimitTotalTimeNum === 1">
                 <el-input-number
                   v-model="form.activityPersonTime"
                   :min="1"
                   style="width: 160px"
+                  :disabled="this.isFormShow == true"
                 />
               </el-form-item>
             </el-col>
@@ -204,17 +177,18 @@
           <el-row>
             <el-col :span="10">
               <el-form-item label="用户单日参与次数">
-                <el-radio v-model="is_limit_user_times" label="0">否</el-radio>
-                <el-radio v-model="is_limit_user_times" label="1">是</el-radio>
+                <el-radio v-model="form.isLimitDayTimeNum" :disabled="this.isFormShow == true" :label="0">不限制</el-radio>
+                <el-radio v-model="form.isLimitDayTimeNum" :disabled="this.isFormShow == true" :label="1">限制</el-radio>
               </el-form-item>
             </el-col>
             <el-col :span="3">
-              <el-form-item v-if="is_limit_user_times == '1'">
+              <el-form-item v-if="form.isLimitDayTimeNum === 1">
                 <el-input-number
                   v-model="form.activityPersonDayLimitTime"
                   :min="1"
                   prop="activityPersonDayLimitTime"
                   style="width: 160px"
+                  :disabled="this.isFormShow == true"
                 />
               </el-form-item>
             </el-col>
@@ -223,16 +197,20 @@
           <el-row>
             <el-col :span="10">
               <el-form-item label="单用户总中奖次数">
-                <el-radio v-model="is_limit_user_total_prize" label="0"
-                  >否</el-radio
-                >
-                <el-radio v-model="is_limit_user_total_prize" label="1"
-                  >是</el-radio
-                >
+                <el-radio
+                  v-model="form.isLimitTotalPrizeTimeNum"
+                  :label="0"
+                  :disabled="this.isFormShow == true"
+                >不限制</el-radio>
+                <el-radio
+                  v-model="form.isLimitTotalPrizeTimeNum"
+                  :label="1"
+                  :disabled="this.isFormShow == true"
+                >限制</el-radio>
               </el-form-item>
             </el-col>
             <el-col :span="3">
-              <el-form-item v-if="is_limit_user_total_prize == '1'">
+              <el-form-item v-if="form.isLimitTotalPrizeTimeNum === 1">
                 <el-input-number
                   v-model="form.activityPersonPrizeTime"
                   :min="1"
@@ -246,74 +224,78 @@
           <el-row>
             <el-col :span="10">
               <el-form-item label="单用户日中奖次数">
-                <el-radio v-model="is_limit_user_day_prize" label="0"
-                  >否</el-radio
-                >
-                <el-radio v-model="is_limit_user_day_prize" label="1"
-                  >是</el-radio
-                >
+                <el-radio
+                  v-model="form.isLimitPrizeDayTimeNum"
+                  :label="0"
+                  :disabled="this.isFormShow == true"
+                >不限制</el-radio>
+                <el-radio
+                  v-model="form.isLimitPrizeDayTimeNum"
+                  :label="1"
+                  :disabled="this.isFormShow == true"
+                >限制</el-radio>
               </el-form-item>
             </el-col>
             <el-col :span="3">
-              <el-form-item v-if="is_limit_user_day_prize == '1'">
+              <el-form-item v-if="form.isLimitPrizeDayTimeNum === 1">
                 <el-input-number
                   v-model="form.activityPersonDayPrizeTime"
                   :min="1"
                   prop="activityPersonDayPrizeTime"
                   style="width: 160px"
+                  :disabled="this.isFormShow == true"
                 />
               </el-form-item>
             </el-col>
           </el-row>
 
           <el-form-item label="活动区域">
-            <el-radio v-model="is_limit_location" label="0">否</el-radio>
-            <el-radio v-model="is_limit_location" label="1">是</el-radio>
+            <el-radio v-model="form.isLimitArea" :disabled="this.isFormShow == true" :label="0">不限制</el-radio>
+            <el-radio v-model="form.isLimitArea" :disabled="this.isFormShow == true" :label="1">限制</el-radio>
           </el-form-item>
-          <template v-if="is_limit_location == '1'">
+          <template v-if="form.isLimitArea === 1">
             <el-form-item label="省份">
               <el-select
                 v-model="form.activityProvince"
                 placeholder="请选择"
-                @change="getCitiesByProvince"
+                :disabled="this.isFormShow == true"
+                @change="OnProvinceChange"
               >
                 <el-option
                   v-for="item in provinceArray"
                   :key="item.regionCode"
                   :label="item.regionName"
                   :value="item.regionCode"
-                  >{{ item.regionName }}</el-option
-                >
+                >{{ item.regionName }}</el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="城市">
               <el-select
                 v-model="form.activityCity"
                 clearable
-                @change="getDistrictsByCity"
+                :disabled="this.isFormShow == true"
+                @change="OnCityChange"
               >
                 <el-option
                   v-for="item in cityArray"
                   :key="item.regionCode"
                   :label="item.regionName"
                   :value="item.regionCode"
-                  >{{ item.regionName }}</el-option
-                >
+                >{{ item.regionName }}</el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="地区">
               <el-select
                 v-model="form.activityRegion"
                 clearable
-                @change="changeRegion"
+                :disabled="this.isFormShow == true"
               >
                 <el-option
                   v-for="item in regionArray"
                   :key="item.regionCode"
                   :label="item.regionName"
                   :value="item.regionCode"
-                  >{{ item.regionName }}</el-option
-                >
+                >{{ item.regionName }}</el-option>
               </el-select>
             </el-form-item>
           </template>
@@ -322,18 +304,18 @@
               <el-select
                 v-model="form.storeId"
                 placeholder="请选择"
-                @change="OnStoreChange"
                 style="width: 500px"
+                :disabled="this.isFormShow == true"
+                @change="OnStoreChange"
               >
                 <el-option
                   v-for="item in this.storeList"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value"
-                  >{{ item.label }}</el-option
-                >
+                >{{ item.label }}</el-option>
               </el-select>
-              <div v-model="form.storeAddress">{{ form.storeAddr }}</div>
+              <div>{{ form.storeAddr }}</div>
             </template>
           </el-form-item>
 
@@ -343,6 +325,7 @@
               :rows="3"
               type="textarea"
               style="width: 500px"
+              :disabled="this.isFormShow == true"
             />
           </el-form-item>
 
@@ -350,8 +333,10 @@
             <el-input-number
               v-model="form.prizeRate"
               :max="100"
+              :min="0"
               prop="prizeRate"
               style="width: 160px"
+              :disabled="this.isFormShow == true"
             />%
           </el-form-item>
 
@@ -361,11 +346,12 @@
               :min="1"
               prop="maxInviteTimeNum"
               style="width: 160px"
+              :disabled="this.isFormShow == true"
             />
           </el-form-item>
 
           <el-form-item label="备注">
-            <el-input v-model="form.remark" style="width: 300px" />
+            <el-input v-model="form.remark" :disabled="this.isFormShow == true" style="width: 300px" />
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -373,161 +359,10 @@
           <el-button
             :loading="crud.status.cu === 2"
             type="primary"
+            :disabled="this.isFormShow == true"
             @click="submitActivityForm('form')"
-            >确认</el-button
-          >
+          >确认</el-button>
         </div>
-      </el-dialog>
-      <!--奖品的表单组件-->
-
-      <el-dialog title="奖品录入" :visible.sync="dialogFormVisible">
-        <el-form
-          :model="prizeForm"
-          style="padding-right: 20%"
-          class="jiang-pin-dlg"
-        >
-          <el-form-item label="奖品名称" :label-width="formLabelWidth">
-            <el-input
-              v-model="prizeForm.prizeName"
-              autocomplete="off"
-              size="small"
-              maxlength="50"
-            />
-          </el-form-item>
-          <el-form-item label="奖品等级" :label-width="formLabelWidth">
-            <el-select
-              v-model="prizeForm.prizeLevel"
-              placeholder="请选择奖品等级"
-            >
-              <el-option
-                v-for="item in dict.prize_level"
-                :key="item.id"
-                :label="item.label"
-                :value="item.value"
-                >{{ item.label }}</el-option
-              >
-            </el-select>
-          </el-form-item>
-
-          <el-form-item label="奖品类型" :label-width="formLabelWidth">
-            <el-select
-              v-model="prizeForm.prizeType"
-              placeholder="请选择奖品类型"
-            >
-              <el-option
-                v-for="item in dict.prize_type"
-                :key="item.id"
-                :label="item.label"
-                :value="item.value"
-                >{{ item.label }}</el-option
-              >
-            </el-select>
-          </el-form-item>
-
-          <el-form-item label="奖品数量" :label-width="formLabelWidth">
-            <el-input
-              v-model="prizeForm.prizeTotalNum"
-              autocomplete="off"
-              size="small"
-              maxlength="50"
-            />
-          </el-form-item>
-
-          <el-form-item label="红包分配方式" :label-width="formLabelWidth">
-            <el-select
-              v-model="prizeForm.redEnvelopeDisMethod"
-              placeholder="请选择红包分配方式"
-            >
-              <el-option
-                v-for="item in dict.red_envelope_dis_method"
-                :key="item.id"
-                :label="item.label"
-                :value="item.value"
-                >{{ item.label }}</el-option
-              >
-            </el-select>
-          </el-form-item>
-
-          <el-form-item
-            v-if="prizeForm.redEnvelopeDisMethod == 0"
-            label="红包固定金额"
-            :label-width="formLabelWidth"
-          >
-            <el-input
-              v-model="prizeForm.redEnvelopeMoney"
-              autocomplete="off"
-              size="small"
-              maxlength="50"
-            />
-          </el-form-item>
-
-          <el-form-item
-            v-if="prizeForm.redEnvelopeDisMethod == 1"
-            label="红包随机最小金额"
-            :label-width="formLabelWidth"
-          >
-            <el-input
-              v-model="prizeForm.redEnvelopeMinMoney"
-              autocomplete="off"
-              size="small"
-              maxlength="50"
-              placeholder="最小金额"
-            />
-          </el-form-item>
-
-          <el-form-item
-            v-if="prizeForm.redEnvelopeDisMethod == 1"
-            label="红包随机最大金额"
-            :label-width="formLabelWidth"
-          >
-            <el-input
-              v-model="prizeForm.redEnvelopeMaxMoney"
-              autocomplete="off"
-              size="small"
-              maxlength="50"
-              placeholder="最大金额"
-            />
-          </el-form-item>
-
-          <el-form-item label="奖品图片" :label-width="formLabelWidth">
-            <el-upload
-              class="upload-demo"
-              action="/api/image/upload"
-              :on-preview="handlePreview"
-              :on-success="successUpload"
-              :headers="uploadHeader"
-              multiple
-              :limit="3"
-              :file-list="fileList"
-            >
-              <el-button size="small" type="primary">点击上传</el-button>
-              <div slot="tip" class="el-upload__tip">
-                只能上传jpg/png文件，且不超过500kb
-              </div>
-            </el-upload>
-          </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="submitForm1">确 定</el-button>
-        </div>
-      </el-dialog>
-
-      <el-dialog
-        title="提示"
-        :visible.sync="qrDialogVisible"
-        width="400px"
-        class="qr-dialog"
-      >
-        <div class="qr-con">
-          <img :src="qrImage" width="100%" height="100%" />
-        </div>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="qrDialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="qrDialogVisible = false"
-            >确 定</el-button
-          >
-        </span>
       </el-dialog>
 
       <!--表格渲染-->
@@ -539,85 +374,6 @@
         style="width: 100%"
         @selection-change="crud.selectionChangeHandler"
       >
-        <el-table-column type="expand">
-          <template slot-scope="props">
-            <el-form label-position="left" inline class="demo-table-expand">
-              <el-form-item label="活动ID">
-                <span>{{ props.row.activityId }}</span>
-              </el-form-item>
-            </el-form>
-            <el-form label-position="left" inline class="demo-table-expand">
-              <el-form-item label="活动标题">
-                <span>{{ props.row.activityTitle }}</span>
-              </el-form-item>
-            </el-form>
-            <el-form label-position="left" inline class="demo-table-expand">
-              <el-form-item label="开始时间">
-                <span>{{ props.row.startTime }}</span>
-              </el-form-item>
-            </el-form>
-            <el-form label-position="left" inline class="demo-table-expand">
-              <el-form-item label="结束时间">
-                <span>{{ props.row.endTime }}</span>
-              </el-form-item>
-            </el-form>
-            <el-form label-position="left" inline class="demo-table-expand">
-              <el-form-item label="用户范围">
-                <template>
-                  <span v-if="props.row.userRange == 0">不限</span>
-                  <span v-else-if="props.row.userRange == 2">微信公众号</span>
-                </template>
-              </el-form-item>
-            </el-form>
-
-            <el-form label-position="left" inline class="demo-table-expand">
-              <el-form-item label="省、市、区">
-                <span
-                  >{{ props.row.activityProvinceName }}、{{
-                    props.row.activityCityName
-                  }}、{{ props.row.activityRegionName }}</span
-                >
-              </el-form-item>
-            </el-form>
-
-            <el-form label-position="left" inline class="demo-table-expand">
-              <el-form-item label="参与人数">
-                <span>{{ props.row.userRangeNum }}</span>
-              </el-form-item>
-            </el-form>
-            <el-form label-position="left" inline class="demo-table-expand">
-              <el-form-item label="单用户参与参数">
-                <span>{{ props.row.activityPersonTime }}</span>
-              </el-form-item>
-            </el-form>
-            <el-form label-position="left" inline class="demo-table-expand">
-              <el-form-item label="单用户日限制数">
-                <span>{{ props.row.activityPersonDayLimitTime }}</span>
-              </el-form-item>
-            </el-form>
-            <el-form label-position="left" inline class="demo-table-expand">
-              <el-form-item label="单用户日限制数">
-                <span>{{ props.row.activityPersonDayLimitTime }}</span>
-              </el-form-item>
-            </el-form>
-            <el-form label-position="left" inline class="demo-table-expand">
-              <el-form-item label="单用户限制中奖数">
-                <span>{{ props.row.activityPersonPrizeTime }}</span>
-              </el-form-item>
-            </el-form>
-            <el-form label-position="left" inline class="demo-table-expand">
-              <el-form-item label="单用户单日限制中奖数">
-                <span>{{ props.row.activityPersonDayPrizeTime }}</span>
-              </el-form-item>
-            </el-form>
-            <el-image
-              :src="props.row.activityImgUrl"
-              style="width: 100px; height: 100px"
-              :fit="fit"
-            ></el-image>
-          </template>
-        </el-table-column>
-
         <el-table-column type="selection" width="55" />
         <el-table-column prop="activityId" label="活动ID" />
         <el-table-column prop="activityTitle" label="活动标题" width="160px" />
@@ -625,7 +381,7 @@
         <el-table-column prop="endTime" label="结束时间" width="160px" />
         <el-table-column prop="activityStatus" label="活动状态">
           <template slot-scope="scope">
-            {{ getActivityStatusName(scope.row) }}
+            {{ getActivityStatusName(scope.row.startTime,scope.row.endTime) }}
           </template>
         </el-table-column>
 
@@ -676,14 +432,12 @@
                 type="primary"
                 size="small"
                 @click="generateQrCode(scope.row.activityId)"
-                >生成二维码</el-button
-              >
+              >生成二维码</el-button>
               <el-button
                 type="primary"
                 size="small"
                 @click="releaseActivity(scope.row.activityId)"
-                >活动发布</el-button
-              >
+              >活动发布</el-button>
             </el-button-group>
           </template>
         </el-table-column>
@@ -715,7 +469,7 @@ const defaultForm = {
   endTime: '',
   activityStatus: '',
   activityType: '',
-  userRange: '',
+  userRange: '2',
   userRangeNum: '',
   activityProvince: '',
   activityCity: '',
@@ -734,6 +488,15 @@ const defaultForm = {
   activityImgUrl: '',
   prizeRate: '',
   maxInviteTimeNum: 1,
+  isLimitDayTimeNum: 1,
+  isLimitPersonNum: 0,
+  isLimitPrizeDayTimeNum: 0,
+  isLimitTotalPrizeTimeNum: 0,
+  isLimitTotalTimeNum: 0,
+  isLimitArea: 0,
+  storeId: '',
+  storeAddr: '',
+  activityRule: ''
 }
 export default {
   name: 'ActivityConfig',
@@ -742,7 +505,7 @@ export default {
     crudOperation,
     rrOperation,
     udOperation,
-    DateRangePicker,
+    DateRangePicker
   },
   mixins: [presenter(), header(), form(defaultForm), crud()],
   dicts: [
@@ -750,11 +513,11 @@ export default {
     'user_range',
     'red_envelope_dis_method',
     'prize_level',
-    'prize_type',
+    'prize_type'
   ],
   cruds() {
     return CRUD({
-      title: '测试接口',
+      title: '活动',
       url: 'api/activityConfig',
       idField: 'columnId',
       sort: 'columnId,desc',
@@ -763,20 +526,22 @@ export default {
         edit: true,
         add: true,
         del: true,
-      },
+        show: true
+      }
     })
   },
   data() {
     return {
+      datePickerOptions: {
+        disabledDate(time) {
+          return time.getTime() < Date.now()
+        }
+      },
+      isFormShow: false,
       fit: '',
       activityTimePicker: [],
-      is_limit_location: '0',
-      is_limit_total_times: '0',
-      is_limit_user_times: '0',
-      is_limit_user_num: '0',
-      is_limit_user_day_prize: '0',
-      is_limit_user_total_prize: '0',
       qrDialogVisible: false,
+      dialogImgVisible: false,
       editFlag: false,
       qrImage: '',
       curActivityId: '',
@@ -785,69 +550,66 @@ export default {
       activity_stats: [
         { value: 0, label: '未开始' },
         { value: 1, label: '进行中' },
-        { value: 2, label: '已结束' },
+        { value: 2, label: '已结束' }
       ],
-      // activityProvinceName: '',
-      // activityCityName: '',
-      // activityRegionName: '',
       uploadHeader: {
         'terminal-type': 1,
-        Authorization: getToken(),
+        Authorization: getToken()
       },
       fileList: [],
       permission: {
         add: ['admin', 'activityConfig:add'],
         edit: ['admin', 'activityConfig:edit'],
-        del: ['admin', 'activityConfig:del'],
+        del: ['admin', 'activityConfig:del']
       },
       rules: {
         activityPersonPrizeTime: [
-          { required: true, message: '不能为空', trigger: 'blur' },
+          { required: true, message: '不能为空', trigger: 'blur' }
         ],
         activityDesc: [
-          { required: true, message: '不能为空', trigger: 'blur' },
+          { required: true, message: '不能为空', trigger: 'blur' }
         ],
         activityTitle: [
-          { required: true, message: '不能为空', trigger: 'blur' },
+          { required: true, message: '不能为空', trigger: 'blur' }
         ],
         startTime: [
-          { required: true, message: '活动开始时间不能为空', trigger: 'blur' },
+          { required: true, message: '活动开始时间不能为空', trigger: 'blur' }
         ],
         endTime: [
-          { required: true, message: '活动结束时间不能为空', trigger: 'blur' },
+          { required: true, message: '活动结束时间不能为空', trigger: 'blur' }
         ],
         prizeRate: [
-          { required: true, message: '中奖率不能为空', trigger: 'blur' },
+          { required: true, message: '中奖率不能为空', trigger: 'blur' }
         ],
         activityRule: [
-          { required: true, message: '活动规则不能为空', trigger: 'blur' },
+          { required: true, message: '活动规则不能为空', trigger: 'blur' }
         ],
         activityPersonDayLimitTime: [
           {
             required: false,
-            validator: (rule, value, callback) => {
-              if (!value && this.form.activityPersonLimitTime == '') {
+            validator: (_rule, value, callback) => {
+              if (!value && this.form.activityPersonLimitTime === '') {
                 callback(new Error('至少填写一个输入框'))
               } else {
                 callback()
               }
             },
-            trigger: 'blur',
-          },
+            trigger: 'blur'
+          }
         ],
         activityPersonLimitTime: [
           {
             required: false,
-            validator: (rule, value, callback) => {
-              if (!value && this.form.activityPersonDayLimitTime == '') {
+            validator: (_rule, value, callback) => {
+              if (!value && this.form.activityPersonDayLimitTime === '') {
                 callback(new Error('至少填写一个输入框'))
               } else {
                 callback()
               }
             },
-            trigger: 'blur',
-          },
-        ],
+            trigger: 'blur'
+          }
+        ]
       },
       district: {
         selectedProvince: '',
@@ -855,7 +617,7 @@ export default {
         selectedDistrict: '',
         provinces: ['省份A', '省份B', '省份C'],
         cities: [],
-        districts: [],
+        districts: []
       },
       provinceArray: [],
       cityArray: [],
@@ -874,24 +636,24 @@ export default {
         redEnvelopeMoney: '',
         redEnvelopeMinMoney: '',
         redEnvelopeMaxMoney: '',
-        remark: '',
+        remark: ''
       },
       queryTypeOptions: [
         { key: 'activityId', display_name: 'activityId' },
         { key: 'activityTitle', display_name: 'activityTitle' },
         {
           key: 'activityStatus',
-          display_name: '活动状态：0-未开始，1-进行中，2-已结束',
+          display_name: '活动状态：0-未开始，1-进行中，2-已结束'
         },
         { key: 'activityType', display_name: '活动类型' },
         {
           key: 'userRange',
-          display_name: '0-表示不限，1-表示企微，2-表示公众号',
+          display_name: '0-表示不限，1-表示企微，2-表示公众号'
         },
         { key: 'activityProvince', display_name: 'activityProvince' },
         { key: 'activityCity', display_name: 'activityCity' },
-        { key: 'activityRegion', display_name: 'activityRegion' },
-      ],
+        { key: 'activityRegion', display_name: 'activityRegion' }
+      ]
     }
   },
   watch: {
@@ -899,27 +661,9 @@ export default {
       if (v != null) {
         this.form.activityStatus = String(this.form.activityStatus)
         this.form.userRange = String(this.form.userRange)
-        if (this.form.activityProvinceName != '') {
-          this.is_limit_location = '1'
-        }
-        if (this.form.activityPersonTime != '') {
-          this.is_limit_total_times = '1'
-        }
-        if (this.form.activityPersonDayLimitTime != '') {
-          this.is_limit_user_times = '1'
-        }
-        if (this.form.userRangeNum != '') {
-          this.is_limit_user_num = '1'
-        }
-        if (this.form.activityPersonDayPrizeTime != '') {
-          this.is_limit_user_day_prize = '1'
-        }
-        if (this.form.activityPersonPrizeTime != '') {
-          this.is_limit_user_total_prize = '1'
-        }
         this.activityTimePicker = [this.form.startTime, this.form.endTime]
       }
-    },
+    }
   },
   mounted() {
     this.getStoreList({}).then((res) => {
@@ -927,7 +671,7 @@ export default {
         this.storeList.push({
           label: element.yzStoreName,
           value: element.yzStoreId,
-          addr: element.storeAddress,
+          addr: element.storeAddress
         })
       })
     })
@@ -935,7 +679,7 @@ export default {
       rows.content.forEach((element) => {
         this.activityList.push({
           label: element.activityTitle,
-          value: element.activityId,
+          value: element.activityId
         })
       })
       console.log(this.activityList)
@@ -949,6 +693,13 @@ export default {
     })
   },
   methods: {
+    handleRemove(file, fileList) {
+      console.log(file, fileList)
+    },
+    handlePictureCardPreview(file) {
+      this.dialogImageUrl = file.url
+      this.dialogImgVisible = true
+    },
     timeChange(time_arr) {
       console.log(time_arr)
       this.form.startTime = time_arr[0]
@@ -956,7 +707,7 @@ export default {
     },
     OnStoreChange(storeId) {
       this.storeList.forEach((element) => {
-        if (element.value == storeId) {
+        if (element.value === storeId) {
           this.form.storeAddr = element.addr
           this.form.storeName = element.label
         }
@@ -966,25 +717,45 @@ export default {
       return request({
         url: 'api/wx/getStoreList',
         method: 'get',
-        data,
+        data
       })
     },
-    getActivityStatusName(row) {
-      console.log(row, '11111111222')
-      for (const item of this.dict.activity_status) {
-        if (item.value == row.activityStatus) {
-          return item.label
-        }
+    getActivityStatusName(startTime, endTime) {
+      const start_timestamp = Date.parse(startTime)
+      const end_timestamp = Date.parse(endTime)
+      const now = Date.now()
+      console.log(start_timestamp, end_timestamp, now)
+      if (now < start_timestamp) {
+        return '活动未开始'
       }
-      return '未知'
+      if (now >= start_timestamp && now <= end_timestamp) {
+        return '活动进行中'
+      }
+      return '活动已结束'
     },
     // 钩子：在获取表格数据之前执行，false 则代表不获取数据
     [CRUD.HOOK.beforeRefresh]() {
       return true
     },
+    // 编辑前将字典明细临时清空，避免日志入库数据过长
+    [CRUD.HOOK.beforeToEdit](_crud, _form) {
+      // 将角色的菜单清空，避免日志入库数据过长
+      this.initAreaOption()
+      this.isFormShow = false
+    },
+    [CRUD.HOOK.beforeToAdd](_crud, _form) {
+      // 将角色的菜单清空，避免日志入库数据过长
+      this.initAreaOption()
+      this.isFormShow = false
+    },
+    [CRUD.HOOK.beforeToShow](_crud, _form) {
+      // 将角色的菜单清空，避免日志入库数据过长
+      this.initAreaOption()
+      // eslint-disable-next-line no-undef
+      this.isFormShow = true
+    },
     generateQrCode(activityId) {
       const param = '/api/wx/getActivityQRCode?activityId=' + activityId
-
       getActivityQRCode(param).then((res) => {
         this.qrDialogVisible = true
         this.qrImage = res.data.picUrl
@@ -998,20 +769,9 @@ export default {
         console.log('res', res.msg)
         this.$message({
           type: 'info',
-          message: res.msg,
+          message: res.msg
         })
       })
-    },
-    editAction(flag) {
-      if (flag) {
-        this.editFlag = true
-        this.$nextTick(() => {
-          this.getCitiesByProvince(this.form.activityProvince)
-        })
-        // this.activityProvinceName = this.form.activityProvinceName
-        // this.activityCityName = this.form.activityCityName
-        // this.activityRegionName = this.form.activityRegionName
-      }
     },
     lrjpShow(id) {
       this.dialogFormVisible = true
@@ -1019,45 +779,40 @@ export default {
     },
     handlePreview() {},
     getCitiesByProvince(pCode) {
-      // 根据省份获取城市列表的逻辑
-      // const t = {'areaCode': this.form.activityProvince}
-      this.form.activityProvinceName = this.provinceArray.filter(
-        (item) => item.regionCode == pCode
-      )[0].regionName
+      // // 根据省份获取城市列表的逻辑
       const t = { areaCode: pCode }
       sysArea.querySysAreaByAreaCode(t).then((res) => {
-        // this.$set('cityArray', res)
-        console.log(res, 'city........')
         this.cityArray = res
-        // this.form.activityCity = ''
         if (this.editFlag) {
           this.editFlag = false
           this.getDistrictsByCity(this.form.activityCity)
         }
       })
-      // this.cityArray=[]
-      // this.regionArray=[]
-      // this.form.activityCity=''
-      // this.form.activityRegion=''
     },
     getDistrictsByCity(cCode) {
       // 根据省份获取城市列表的逻辑
-      // console.log(this.form.activityCity)
-      this.form.activityCityName = this.cityArray.filter(
-        (item) => item.regionCode == cCode
-      )[0].regionName
       const t = { areaCode: cCode }
       sysArea.querySysAreaByAreaCode(t).then((res) => {
         this.regionArray = res
-        // this.form.activityRegion = ''
       })
-      // this.regionArray=[]
-      // this.form.activityRegion=''
     },
-    changeRegion(pcode) {
-      this.form.activityRegionName = this.regionArray.filter(
-        (item) => item.regionCode == pcode
-      )[0].regionName
+    initAreaOption() {
+      console.log('inint area')
+      this.getCitiesByProvince(this.form.activityProvince)
+      this.getDistrictsByCity(this.form.activityCity)
+    },
+    OnProvinceChange(pCode) {
+      console.log('onProviceChange.....')
+      this.getCitiesByProvince(pCode)
+      this.form.activityCity = ''
+      this.form.activityRegion = ''
+      this.activityCity = ''
+      this.regionArray = []
+    },
+    OnCityChange(pCode) {
+      console.log('onCityChange....')
+      this.getDistrictsByCity(pCode)
+      this.activityRegion = ''
     },
     successUpload(res) {
       console.log('過來沒')
@@ -1067,83 +822,32 @@ export default {
       this.form.activityImgUrl = res
     },
     submitForm1() {
-      // this.dialogFormVisible = false
       const param = {
-        ...this.prizeForm,
+        ...this.prizeForm
       }
-      // param.activityProvinceName = this.activityProvinceName
-      // param.activityCityName = this.activityCityName
-      // param.activityRegionName = this.activityRegionName
       param.activityId = this.curActivityId
-      console.log('param444', param)
-      sysArea.addPrizeConfig(param).then((res) => {
-        console.log('res', res)
+      sysArea.addPrizeConfig(param).then((_res) => {
         this.dialogFormVisible = false
       })
     },
     submitActivityForm(formName) {
-      if (this.is_limit_location == '1') {
+      if (this.form.isLimitArea === 1) {
         if (
-          this.form.activityProvince == '' ||
-          this.form.activityProvinceName == ''
+          this.form.activityProvince === '' ||
+          this.form.activityProvinceName === ''
         ) {
           this.$message.warning('省份不能为空!')
           return
         }
-      } else {
-        this.form.activityProvince = ''
-        this.form.activityProvinceName = ''
-        this.form.activityCity = ''
-        this.form.activityCityName = ''
-        this.form.activityRegion = ''
-        this.form.activityRegionName = ''
       }
-      if (this.form.startTime >= this.form.endTime) {
-        this.$message.warning('活动开始时间不能大于结束时间!')
-        return
-      }
-
-      if (this.is_limit_user_times == this.is_limit_total_times) {
+      if (this.form.isLimitTotalTimeNum === 0 && this.form.isLimitDayTimeNum === 0) {
         this.$message.warning(
-          '用户单日参与次数 与 用户活动期间参与总次数 不能同时为【是】或者【否】'
+          '用户单日参与次数 与 用户活动期间参与总次数 不能同时为"不限制"'
         )
         return
       }
 
-      if (this.is_limit_total_times == '0') {
-        this.form.activityPersonTime = 0
-      } else {
-        if (this.form.activityPersonTime <= 0) {
-          this.$message.warning('用户活动期间参与总次数不能为空')
-          return
-        }
-      }
-      if (this.is_limit_user_num == '0') {
-        this.form.userRangeNum = 0
-      } else {
-        if (this.form.userRangeNum <= 0) {
-          this.$message.warning('限制参与人数不能为空')
-          return
-        }
-      }
-      if (
-        this.is_limit_user_times == '1' &&
-        this.form.activityPersonDayLimitTime <= 0
-      ) {
-        this.$message.warning('单用户单日限制数不能为空')
-        return
-      }
-      if (this.is_limit_user_times == '0') {
-        this.form.activityPersonDayLimitTime = 0
-      }
-      if (this.is_limit_user_day_prize == '0') {
-        this.form.activityPersonDayPrizeTime = 0
-      }
-
-      if (this.is_limit_user_total_prize == '0') {
-        this.form.activityPersonPrizeTime = 0
-      }
-      if (this.form.userRange == '0') {
+      if (this.form.userRange === '0') {
         this.$message.warning('暂时只支持微信公众号用户参与活动')
         return
       }
@@ -1155,8 +859,8 @@ export default {
           return false
         }
       })
-    },
-  },
+    }
+  }
 }
 </script>
 
